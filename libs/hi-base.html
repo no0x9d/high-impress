@@ -1,0 +1,46 @@
+<link rel="import" href="../vendor/polymer/polymer.html">
+
+<polymer-element name="hi-base" extends="hi-basefunctions">
+    <script>
+        Polymer({
+            ready: function() {
+                if (typeof (marked) === "function" && this.mdText){
+                    this.innerHTML = marked(this.innerHTML);
+                }
+                this.setPosition();
+            },
+            publish: {
+                x: 0,
+                y: 0,
+                z: 0,
+                rotateX: 0,
+                rotateY: 0,
+                rotateZ:0,
+                rotate:0,
+                scale:1,
+                mdText: false
+            },
+            observe: {
+                x: 'setPosition',
+                y: 'setPosition',
+                z: 'setPosition',
+                rotateX: 'setPosition',
+                rotateY: 'setPosition',
+                rotateZ: 'setPosition',
+                rotate: 'setPosition',
+                scale: 'setPosition',
+            },
+            setPosition: function(){
+                css(this, {
+                    position: "absolute",
+                    transform: "translate(-50%,-50%)" +
+                    translate({x: this.x, y: this.y, z: this.z}) +
+                    rotate({x:this.rotateX, y:this.rotateY, z:this.rotateZ}) +
+                    scale(this.scale),
+                    transformStyle: "preserve-3d"
+                });
+            }
+        });
+    </script>
+</polymer-element>
+

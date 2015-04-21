@@ -1,0 +1,50 @@
+<link rel="import" href="../vendor/polymer/polymer.html">
+
+<polymer-element name="hi-step" extends="hi-base" hi-step>
+    <script>
+        Polymer({
+            ready: function() {
+                this.super();
+
+                var substeps = $$(".substep", this);
+                if (substeps){
+                    substeps.forEach(function (sub){
+                       sub.classList.add("future");
+                    });
+                }
+                this.fire('highimpress:stepInitialized')
+            },
+            nextSubstep: function (){
+                var lastSubsteps = $$('.substep.present', this);
+                if (lastSubsteps) {
+                    lastSubsteps.forEach(function (lastSubstep){
+                        lastSubstep.classList.remove("present");
+                        lastSubstep.classList.add("past");
+                    });
+                }
+
+                var substep = $('.substep.future', this);
+                var substeps = $$('.substep.future', this);
+
+                if (substep) {
+                    if (substep.dataset.group) {
+                        var groupid = substep.dataset.group;
+                        substeps.forEach(function (sub) {
+                            if (sub.dataset.group && sub.dataset.group == groupid) {
+                                sub.classList.remove("future");
+                                sub.classList.add("present");
+                            }
+                        });
+                    }
+                    else {
+                        substep.classList.remove("future");
+                        substep.classList.add("present");
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+    </script>
+</polymer-element>
+

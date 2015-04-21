@@ -1,13 +1,11 @@
 {
-  "name": "High Impress",
-  "version": "0.0.0",
+  "name": "high-impress",
+  "version": "0.5.0",
   "authors": [
     "Christoph Hoffmann <Christoph.Hoffmann@adesso.de>"
   ],
-  "description": "A HTML5, CSS & JS presentation framework. Build ontop of the great impress.js",
+  "description": "A HTML5, CSS & JS presentation framework build ontop of the great impress.js",
   "main": "index.html",
-  "license": "MIT",
-  "private": true,
   "dependencies": {
     "marked": "~0.3.3",
     "polymer": "Polymer/polymer#0.5"

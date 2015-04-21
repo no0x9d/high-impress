@@ -1,0 +1,406 @@
+<link rel="import" href="../vendor/polymer/polymer.html">
+
+<polymer-element name="hi-presentation" extends="hi-basefunctions">
+    <template>
+        <div id="canvas">
+            <content></content>
+        </div>
+    </template>
+    <script>
+        (function () {
+            // Run once. Private and static to the element.
+
+            // `toNumber` takes a value given as `numeric` parameter and tries to turn
+            // it into a number. If it is not possible it returns 0 (or other value
+            // given as `fallback`).
+            var toNumber = function toNumber(numeric, fallback) {
+                return isNaN(numeric) ? (fallback || 0) : Number(numeric);
+            };
+
+            // `getStep` is a helper function that returns a step element defined by parameter.
+            // If a number is given, step with index given by the number is returned, if a string
+            // is given step element with such id is returned, if DOM element is given it is returned
+            // if it is a correct step element.
+            var getStep = function (step, steps) {
+                if (typeof step === "number") {
+                    step = step < 0 ? steps[steps.length + step] : steps[step];
+                } else if (typeof step === "string") {
+                    step = byId(step);
+                }
+                return (step && step.id) ? step : null;
+            };
+
+            // `getElementFromHash` returns an element located by id from hash part of
+            // window location.
+            var getElementFromHash = function () {
+                // get id from url # by removing `#` or `#/` from the beginning,
+                // so both "fallback" `#slide-id` and "enhanced" `#/slide-id` will work
+                return byId(window.location.hash.replace(/^#\/?/, ""));
+            };
+
+            var computeWindowScale = function (config) {
+                var hScale = window.innerHeight / config.height,
+                        wScale = window.innerWidth / config.width,
+                        scale = hScale > wScale ? wScale : hScale;
+
+                if (config.maxScale && scale > config.maxScale) {
+                    scale = config.maxScale;
+                }
+
+                if (config.minScale && scale < config.minScale) {
+                    scale = config.minScale;
+                }
+
+                return scale;
+            };
+
+            // Run for every instance of the element that's created.
+            Polymer({
+                publish: {
+                    width: 1024,
+                    height: 768,
+                    maxScale: 1,
+                    minScale: 0,
+                    perspective: 1000,
+                    transitionDuration: 1000
+                },
+                computed: {
+                    numStep: 'steps.length'
+                },
+                ready: function() {
+                    var root = this;
+                    var canvas = this.$.canvas;
+                    var body = document.body;
+                    var windowScale = this.windowScale = computeWindowScale(this);
+                    var rootStyles = {
+                        position: "absolute",
+                        transformOrigin: "top left",
+                        transition: "all 0s ease-in-out",
+                        transformStyle: "preserve-3d"
+                    };
+
+                    css(body, {
+                        height: "100%",
+                        overflow: "hidden"
+                    });
+
+                    css(root, rootStyles);
+                    css(root, {
+                        top: "50%",
+                        left: "50%",
+                        transform: perspective(this.perspective / windowScale) + scale(windowScale)
+                    });
+                    css(canvas, rootStyles);
+
+                    // set a default initial state of the canvas
+                    this.currentState = {
+                        translate: { x: 0, y: 0, z: 0 },
+                        rotate: { x: 0, y: 0, z: 0 },
+                        scale: 1
+                    };
+
+                    //listen for initialization of steps. when all steps are ready go to the actual step from the
+                    //url or go to the first step in the presentation
+//                    this.addEventListener("highimpress:stepInitialized", function (){
+//                        numStepsInitialized++;
+//                        if(numStepsInitialized === this.steps.length){
+//                            this.goto(getElementFromHash() || this.steps[0], 0);
+//                        }
+//                    });
+
+                    // delegated handler for clicking on step elements
+                    document.addEventListener("click", function ( event ) {
+                        var target = event.target;
+                        // find closest step element that is not active
+                        // TODO: query selector does not work with extended step elements
+                        while ( !(target.nodeName.toLowerCase() === "hi-step" && !target.classList.contains("active")) &&
+                        (target !== document.documentElement) ) {
+                            target = target.parentNode;
+                        }
+
+                        if ( root.goto(target) ) {
+                            event.preventDefault();
+                        }
+                    }, false);
+
+                    // KEYBOARD NAVIGATION HANDLERS
+
+                    // Prevent default keydown action when one of supported key is pressed.
+                    document.addEventListener("keydown", function ( event ) {
+                        if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
+                            event.preventDefault();
+                        }
+                    }, false);
+
+                    // Trigger impress action (next or prev) on keyup.
+
+                    // Supported keys are:
+                    // [space] - quite common in presentation software to move forward
+                    // [up] [right] / [down] [left] - again common and natural addition,
+                    // [pgdown] / [pgup] - often triggered by remote controllers,
+                    // [tab] - this one is quite controversial, but the reason it ended up on
+                    //   this list is quite an interesting story... Remember that strange part
+                    //   in the impress.js code where window is scrolled to 0,0 on every presentation
+                    //   step, because sometimes browser scrolls viewport because of the focused element?
+                    //   Well, the [tab] key by default navigates around focusable elements, so clicking
+                    //   it very often caused scrolling to focused element and breaking impress.js
+                    //   positioning. I didn't want to just prevent this default action, so I used [tab]
+                    //   as another way to moving to next step... And yes, I know that for the sake of
+                    //   consistency I should add [shift+tab] as opposite action...
+                    document.addEventListener("keyup", function ( event ) {
+                        if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 )
+                                || (event.keyCode >= 37 && event.keyCode <= 40) || event.keyCode == 85 ) {
+                            switch( event.keyCode ) {
+                                case 33: // pg up
+                                case 37: // left
+                                case 38: // up
+                                    root.prevStep();
+                                    break;
+                                case 9:  // tab
+                                case 34: // pg down
+                                case 40: // down
+                                    root.nextStep();
+                                    break;
+                                case 39: // right
+                                case 32: // space
+                                    root.nextSubstep();
+                                    break;
+                                case 85: // U
+//                                    this.updateStatus();
+                            }
+
+                            event.preventDefault();
+                        }
+                    }, false);
+
+                    var lastHash = "";
+
+                    // `#/step-id` is used instead of `#step-id` to prevent default browser
+                    // scrolling to element in hash.
+                    //
+                    // And it has to be set after animation finishes, because in Chrome it
+                    // makes transtion laggy.
+                    // BUG: http://code.google.com/p/chromium/issues/detail?id=62820
+                    this.addEventListener("highimpress:stepenter", function (event) {
+                        window.location.hash = lastHash = "#/" + event.target.id;
+                    }, false);
+
+                    window.addEventListener("hashchange", function () {
+                        // When the step is entered hash in the location is updated
+                        // (just few lines above from here), so the hash change is
+                        // triggered and we would call `goto` again on the same element.
+                        //
+                        // To avoid this we store last entered hash and compare.
+                        if (window.location.hash !== lastHash) {
+                            root.goto(getElementFromHash());
+                        }
+                    }, false);
+
+                    // throttling function calls, by Remy Sharp
+                    // http://remysharp.com/2010/07/21/throttling-function-calls/
+                    var throttle = function (fn, delay) {
+                        var timer = null;
+                        return function () {
+                            var context = this, args = arguments;
+                            clearTimeout(timer);
+                            timer = setTimeout(function () {
+                                fn.apply(context, args);
+                            }, delay);
+                        };
+                    };
+
+                    // rescale presentation when window is resized
+                    window.addEventListener("resize", throttle(function () {
+                        // force going to active step again, to trigger rescaling
+                        root.goto( root.activeStep, 500 );
+                    }, 250), false);
+                },
+                domReady: function () {
+                    this.steps = $$("[hi-step]", this);
+
+                    this.goto(getElementFromHash() || this.steps[0], 0);
+                },
+                nextStep: function next(){
+                    var steps = this.steps;
+                    var next = 0;
+                    if ( this.activeStep ) {
+                        next = steps.indexOf(this.activeStep) + 1;
+                    }
+                    next = next < steps.length ? steps[ next ] : steps[ 0 ];
+                    return this.goto(next);
+                },
+                nextSubstep: function () {
+                    if(!this.activeStep || !this.activeStep.nextSubstep()){
+                        this.nextStep();
+                    }
+                },
+                prevStep: function prev(){
+                    var steps = this.steps;
+                    var prev = steps.indexOf(this.activeStep) - 1;
+                        prev = prev >= 0 ? steps[prev] : steps[steps.length - 1];
+
+                    return this.goto(prev);
+                },
+                goto : function goto(el, duration) {
+
+                    var activeStep = this.activeStep;
+                    var currentState = this.currentState;
+                    var windowScale = this.windowScale;
+                    var root = this;
+                    var canvas = this.$.canvas;
+
+                    if (!(el = getStep(el, this.steps))) {
+                        // presentation not initialized or given element is not a step
+                        return false;
+                    }
+
+                    // Sometimes it's possible to trigger focus on first link with some keyboard action.
+                    // Browser in such a case tries to scroll the page to make this element visible
+                    // (even that body overflow is set to hidden) and it breaks our careful positioning.
+                    //
+                    // So, as a lousy (and lazy) workaround we will make the page scroll back to the top
+                    // whenever slide is selected
+                    //
+                    // If you are reading this and know any better way to handle it, I'll be glad to hear about it!
+                    window.scrollTo(0, 0);
+
+                    var step = el;
+
+                    if (activeStep) {
+                        activeStep.classList.remove("active");
+//                        body.classList.remove("hi-on-" + activeStep.id);
+                    }
+                    el.classList.add("active");
+
+//                    body.classList.add("hi-on-" + el.id);
+
+                    // compute target state of the canvas based on given step
+                    var target = {
+                        rotate: {
+                            x: -step.rotateX,
+                            y: -step.rotateY,
+                            z: -step.rotateZ
+                        },
+                        translate: {
+                            x: -step.x,
+                            y: -step.y,
+                            z: -step.z
+                        },
+                        scale: 1 / step.scale
+                    };
+
+                    // Check if the transition is zooming in or not.
+                    //
+                    // This information is used to alter the transition style:
+                    // when we are zooming in - we start with move and rotate transition
+                    // and the scaling is delayed, but when we are zooming out we start
+                    // with scaling down and move and rotation are delayed.
+                    var zoomin = target.scale >= currentState.scale;
+
+                    duration = toNumber(duration, this.transitionDuration);
+                    var delay = (duration / 2);
+
+                    // if the same step is re-selected, force computing window scaling,
+                    // because it is likely to be caused by window resize
+                    if (el === activeStep) {
+                        windowScale = computeWindowScale(this);
+                    }
+
+                    var targetScale = target.scale * windowScale;
+
+                    // trigger leave of currently active element (if it's not the same step again)
+                    if (activeStep && activeStep !== el) {
+//                        onStepLeave(activeStep);
+                    }
+
+                    // Now we alter transforms of `root` and `canvas` to trigger transitions.
+                    //
+                    // And here is why there are two elements: `root` and `canvas` - they are
+                    // being animated separately:
+                    // `root` is used for scaling and `canvas` for translate and rotations.
+                    // Transitions on them are triggered with different delays (to make
+                    // visually nice and 'natural' looking transitions), so we need to know
+                    // that both of them are finished.
+                    css(root, {
+                        // to keep the perspective look similar for different scales
+                        // we need to 'scale' the perspective, too
+                        transform: perspective(this.perspective / targetScale) + scale(targetScale),
+                        transitionDuration: duration + "ms",
+                        transitionDelay: (zoomin ? delay : 0) + "ms"
+                    });
+
+                    css(canvas, {
+                        transform: rotate(target.rotate, true) + translate(target.translate),
+                        transitionDuration: duration + "ms",
+                        transitionDelay: (zoomin ? 0 : delay) + "ms"
+                    });
+
+                    // Here is a tricky part...
+                    //
+                    // If there is no change in scale or no change in rotation and translation, it means there was actually
+                    // no delay - because there was no transition on `root` or `canvas` elements.
+                    // We want to trigger `impress:stepenter` event in the correct moment, so here we compare the current
+                    // and target values to check if delay should be taken into account.
+                    //
+                    // I know that this `if` statement looks scary, but it's pretty simple when you know what is going on
+                    // - it's simply comparing all the values.
+                    if (currentState.scale === target.scale ||
+                            (currentState.rotate.x === target.rotate.x && currentState.rotate.y === target.rotate.y &&
+                            currentState.rotate.z === target.rotate.z && currentState.translate.x === target.translate.x &&
+                            currentState.translate.y === target.translate.y && currentState.translate.z === target.translate.z)) {
+                        delay = 0;
+                    }
+
+                    // store current state
+                    this.currentState = target;
+                    this.activeStep = el;
+
+                    // And here is where we trigger `impress:stepenter` event.
+                    // We simply set up a timeout to fire it taking transition duration (and possible delay) into account.
+                    //
+                    // I really wanted to make it in more elegant way. The `transitionend` event seemed to be the best way
+                    // to do it, but the fact that I'm using transitions on two separate elements and that the `transitionend`
+                    // event is only triggered when there was a transition (change in the values) caused some bugs and
+                    // made the code really complicated, cause I had to handle all the conditions separately. And it still
+                    // needed a `setTimeout` fallback for the situations when there is no transition at all.
+                    // So I decided that I'd rather make the code simpler than use shiny new `transitionend`.
+                    //
+                    // If you want learn something interesting and see how it was done with `transitionend` go back to
+                    // version 0.5.2 of impress.js: http://github.com/bartaz/impress.js/blob/0.5.2/js/impress.js
+                    window.clearTimeout(this.stepEnterTimeout);
+                    this.stepEnterTimeout = window.setTimeout(function () {
+//                        onStepEnter(activeStep);
+                        el.fire('highimpress:stepenter');
+                    }, duration + delay);
+
+                    return el;
+                }
+            });
+        })();
+    </script>
+</polymer-element>
+
+<!--
+Navigation API
+    (x) goto
+    (x) next
+    (x) prev
+    (x) nextSupstep
+    prevSubstep
+Event API
+    onleaving Step
+    leaving Step
+    onenter Step
+    (x) enter Step
+Status API
+    (x) actual Step
+    (x) number of Steps
+    Printing Mode
+    Black Key
+    Presenter Mode
+
+Features
+    (x) Markdown Elements
+
+
+-->
