@@ -6,13 +6,16 @@
             ready: function() {
                 this.super();
 
+                // initialize state of substeps to 'future'
                 var substeps = $$(".substep", this);
                 if (substeps){
                     substeps.forEach(function (sub){
                        sub.classList.add("future");
                     });
                 }
-                this.fire('highimpress:stepInitialized')
+            },
+            domReady: function () {
+                this.fire('high-impress:stepInitialized');
             },
             nextSubstep: function (){
                 var lastSubsteps = $$('.substep.present', this);
