@@ -181,7 +181,7 @@
                     // And it has to be set after animation finishes, because in Chrome it
                     // makes transtion laggy.
                     // BUG: http://code.google.com/p/chromium/issues/detail?id=62820
-                    this.addEventListener("highimpress:stepenter", function (event) {
+                    this.addEventListener("high-impress:stepenter", function (event) {
                         window.location.hash = lastHash = "#/" + event.target.id;
                     }, false);
 
@@ -216,6 +216,8 @@
                     }, 250), false);
                 },
                 domReady: function () {
+                    // every element with a hi-step attribute can be a possible step
+                    // if it also has all additional needed attributes
                     this.steps = $$("[hi-step]", this);
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
@@ -339,7 +341,7 @@
                     //
                     // If there is no change in scale or no change in rotation and translation, it means there was actually
                     // no delay - because there was no transition on `root` or `canvas` elements.
-                    // We want to trigger `impress:stepenter` event in the correct moment, so here we compare the current
+                    // We want to trigger `high-impress:stepenter` event in the correct moment, so here we compare the current
                     // and target values to check if delay should be taken into account.
                     //
                     // I know that this `if` statement looks scary, but it's pretty simple when you know what is going on
@@ -355,7 +357,7 @@
                     this.currentState = target;
                     this.activeStep = el;
 
-                    // And here is where we trigger `impress:stepenter` event.
+                    // And here is where we trigger `high-impress:stepenter` event.
                     // We simply set up a timeout to fire it taking transition duration (and possible delay) into account.
                     //
                     // I really wanted to make it in more elegant way. The `transitionend` event seemed to be the best way
@@ -370,7 +372,7 @@
                     window.clearTimeout(this.stepEnterTimeout);
                     this.stepEnterTimeout = window.setTimeout(function () {
 //                        onStepEnter(activeStep);
-                        el.fire('highimpress:stepenter');
+                        el.fire('high-impress:stepenter');
                     }, duration + delay);
 
                     return el;
