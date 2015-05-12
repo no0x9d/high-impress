@@ -2,103 +2,76 @@
 
 <polymer-element name="hi-basefunctions">
     <script>
+        Polymer({
 
-        // `pfx` is a function that takes a standard CSS property name as a parameter
-        // and returns it's prefixed version valid for current browser it runs in.
-        // The code is heavily inspired by Modernizr http://www.modernizr.com/
-        var pfx = (function () {
+            // `pfx` is a function that takes a standard CSS property name as a parameter
+            // and returns it's prefixed version valid for current browser it runs in.
+            // The code is heavily inspired by Modernizr http://www.modernizr.com/
+            pfx: (function () {
 
-            var style = document.createElement('dummy').style,
-                    prefixes = 'Webkit Moz O ms Khtml'.split(' '),
-                    memory = {};
+                var style = document.createElement('dummy').style,
+                        prefixes = 'Webkit Moz O ms Khtml'.split(' '),
+                        memory = {};
 
-            return function (prop) {
-                if (typeof memory[prop] === "undefined") {
+                return function (prop) {
+                    if (typeof memory[prop] === "undefined") {
 
-                    var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1),
-                            props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
+                        var ucProp = prop.charAt(0).toUpperCase() + prop.substr(1),
+                                props = (prop + ' ' + prefixes.join(ucProp + ' ') + ucProp).split(' ');
 
-                    memory[prop] = null;
-                    for (var i in props) {
-                        if (style[props[i]] !== undefined) {
-                            memory[prop] = props[i];
-                            break;
+                        memory[prop] = null;
+                        for (var i in props) {
+                            if (style[props[i]] !== undefined) {
+                                memory[prop] = props[i];
+                                break;
+                            }
+                        }
+                    }
+                    return memory[prop];
+                };
+
+            })(),
+
+            // `css` function applies the styles given in `props` object to the element
+            // given as `el`. It runs all property names through `pfx` function to make
+            // sure proper prefixed version of the property is used.
+            css: function (el, props) {
+                var key, pkey;
+                for (key in props) {
+                    if (props.hasOwnProperty(key)) {
+                        pkey = this.pfx(key);
+                        if (pkey !== null) {
+                            el.style[pkey] = props[key];
                         }
                     }
                 }
-                return memory[prop];
-            };
+                return el;
+            },
 
-        })();
+            // `translate` builds a translate transform string for given data.
+            translateCSS: function (translate) {
+                return " translate3d(" + translate.x + "px," + translate.y + "px," + translate.z + "px) ";
+            },
 
-        // `arraify` takes an array-like object and turns it into real Array
-        // to make all the Array.prototype goodness available.
-        var arrayify = function (a) {
-            return [].slice.call(a);
-        };
+            // `rotate` builds a rotate transform string for given data.
+            // By default the rotations are in X Y Z order that can be reverted by passing `true`
+            // as second parameter.
+            rotateCSS: function (rotate, revert) {
+                var rX = " rotateX(" + rotate.x + "deg) ",
+                        rY = " rotateY(" + rotate.y + "deg) ",
+                        rZ = " rotateZ(" + rotate.z + "deg) ";
 
-        // `$` returns first element for given CSS `selector` in the `context` of
-        // the given element or whole document.
-        var $ = function query(selector, context) {
-            context = context || document;
-            return context.querySelector(selector);
-        };
-
-        // `$$` return an array of elements for given CSS `selector` in the `context` of
-        // the given element or whole document.
-        var $$ = function queryAll(selector, context) {
-            context = context || document;
-            return arrayify(context.querySelectorAll(selector));
-        };
-
-        // `byId` returns element with given `id` - you probably have guessed that ;)
-        var byId = function byId(id) {
-            return document.getElementById(id);
-        };
-
-        // `css` function applies the styles given in `props` object to the element
-        // given as `el`. It runs all property names through `pfx` function to make
-        // sure proper prefixed version of the property is used.
-        var css = function (el, props) {
-            var key, pkey;
-            for (key in props) {
-                if (props.hasOwnProperty(key)) {
-                    pkey = pfx(key);
-                    if (pkey !== null) {
-                        el.style[pkey] = props[key];
-                    }
-                }
+                return revert ? rZ + rY + rX : rX + rY + rZ;
+            },
+            // `scale` builds a scale transform string for given data.
+            scaleCSS: function (s) {
+                return " scale(" + s + ") ";
+            },
+            // `perspective` builds a perspective transform string for given data.
+            perspectiveCSS: function (p) {
+                return " perspective(" + p + "px) ";
             }
-            return el;
-        };
-
-        // `translate` builds a translate transform string for given data.
-        var translate = function (translate) {
-            return " translate3d(" + translate.x + "px," + translate.y + "px," + translate.z + "px) ";
-        };
-
-        // `rotate` builds a rotate transform string for given data.
-        // By default the rotations are in X Y Z order that can be reverted by passing `true`
-        // as second parameter.
-        var rotate = function (rotate, revert) {
-            var rX = " rotateX(" + rotate.x + "deg) ",
-                    rY = " rotateY(" + rotate.y + "deg) ",
-                    rZ = " rotateZ(" + rotate.z + "deg) ";
-
-            return revert ? rZ + rY + rX : rX + rY + rZ;
-        };
-
-        // `scale` builds a scale transform string for given data.
-        var scale = function (s) {
-            return " scale(" + s + ") ";
-        };
-
-        // `perspective` builds a perspective transform string for given data.
-        var perspective = function (p) {
-            return " perspective(" + p + "px) ";
-        };
-
-        Polymer();
+        });
     </script>
 </polymer-element>
 

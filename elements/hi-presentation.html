@@ -10,6 +10,9 @@
         (function () {
             // Run once. Private and static to the element.
 
+            // get a reference on our helper api
+            var hi = window.HighImpress;
+
             // `toNumber` takes a value given as `numeric` parameter and tries to turn
             // it into a number. If it is not possible it returns 0 (or other value
             // given as `fallback`).
@@ -35,7 +38,7 @@
             var getElementFromHash = function () {
                 // get id from url # by removing `#` or `#/` from the beginning,
                 // so both "fallback" `#slide-id` and "enhanced" `#/slide-id` will work
-                return byId(window.location.hash.replace(/^#\/?/, ""));
+                return hi.byId(window.location.hash.replace(/^#\/?/, ""));
             };
 
             var computeWindowScale = function (config) {
@@ -79,18 +82,18 @@
                         transformStyle: "preserve-3d"
                     };
 
-                    css(body, {
+                    this.css(body, {
                         height: "100%",
                         overflow: "hidden"
                     });
 
-                    css(root, rootStyles);
-                    css(root, {
+                    this.css(root, rootStyles);
+                    this.css(root, {
                         top: "50%",
                         left: "50%",
-                        transform: perspective(this.perspective / windowScale) + scale(windowScale)
+                        transform: this.perspectiveCSS(this.perspective / windowScale) + this.scaleCSS(windowScale)
                     });
-                    css(canvas, rootStyles);
+                    this.css(canvas, rootStyles);
 
                     // set a default initial state of the canvas
                     this.currentState = {
@@ -218,7 +221,7 @@
                 domReady: function () {
                     // every element with a hi-step attribute can be a possible step
                     // if it also has all additional needed attributes
-                    this.steps = $$("[hi-step]", this);
+                    this.steps = hi.$$("[hi-step]", this);
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
@@ -323,16 +326,16 @@
                     // Transitions on them are triggered with different delays (to make
                     // visually nice and 'natural' looking transitions), so we need to know
                     // that both of them are finished.
-                    css(root, {
+                    this.css(root, {
                         // to keep the perspective look similar for different scales
                         // we need to 'scale' the perspective, too
-                        transform: perspective(this.perspective / targetScale) + scale(targetScale),
+                        transform: this.perspectiveCSS(this.perspective / targetScale) + this.scaleCSS(targetScale),
                         transitionDuration: duration + "ms",
                         transitionDelay: (zoomin ? delay : 0) + "ms"
                     });
 
-                    css(canvas, {
-                        transform: rotate(target.rotate, true) + translate(target.translate),
+                    this.css(canvas, {
+                        transform: this.rotateCSS(target.rotate, true) + this.translateCSS(target.translate),
                         transitionDuration: duration + "ms",
                         transitionDelay: (zoomin ? 0 : delay) + "ms"
                     });

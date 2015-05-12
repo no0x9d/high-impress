@@ -2,52 +2,58 @@
 
 <polymer-element name="hi-step" extends="hi-base" hi-step>
     <script>
-        Polymer({
-            ready: function() {
-                this.super();
+        (function hiStep(window) {
 
-                // initialize state of substeps to 'future'
-                var substeps = $$(".substep", this);
-                if (substeps){
-                    substeps.forEach(function (sub){
-                       sub.classList.add("future");
-                    });
-                }
-            },
-            domReady: function () {
-                this.fire('high-impress:stepInitialized');
-            },
-            nextSubstep: function (){
-                var lastSubsteps = $$('.substep.present', this);
-                if (lastSubsteps) {
-                    lastSubsteps.forEach(function (lastSubstep){
-                        lastSubstep.classList.remove("present");
-                        lastSubstep.classList.add("past");
-                    });
-                }
+            //get a reference on our helper api
+            var hi = window.HighImpress;
 
-                var substep = $('.substep.future', this);
-                var substeps = $$('.substep.future', this);
+            Polymer({
+                ready: function () {
+                    this.super();
 
-                if (substep) {
-                    if (substep.dataset.group) {
-                        var groupid = substep.dataset.group;
+                    // initialize state of substeps to 'future'
+                    var substeps = hi.$$(".substep", this);
+                    if (substeps) {
                         substeps.forEach(function (sub) {
-                            if (sub.dataset.group && sub.dataset.group == groupid) {
-                                sub.classList.remove("future");
-                                sub.classList.add("present");
-                            }
+                            sub.classList.add("future");
                         });
                     }
-                    else {
-                        substep.classList.remove("future");
-                        substep.classList.add("present");
+                },
+                domReady: function () {
+                    this.fire('high-impress:stepInitialized');
+                },
+                nextSubstep: function () {
+                    var lastSubsteps = hi.$$('.substep.present', this);
+                    if (lastSubsteps) {
+                        lastSubsteps.forEach(function (lastSubstep) {
+                            lastSubstep.classList.remove("present");
+                            lastSubstep.classList.add("past");
+                        });
                     }
-                    return true;
+
+                    var substep = hi.$('.substep.future', this);
+                    var substeps = hi.$$('.substep.future', this);
+
+                    if (substep) {
+                        if (substep.dataset.group) {
+                            var groupid = substep.dataset.group;
+                            substeps.forEach(function (sub) {
+                                if (sub.dataset.group && sub.dataset.group == groupid) {
+                                    sub.classList.remove("future");
+                                    sub.classList.add("present");
+                                }
+                            });
+                        }
+                        else {
+                            substep.classList.remove("future");
+                            substep.classList.add("present");
+                        }
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        })(window);
     </script>
 </polymer-element>
 

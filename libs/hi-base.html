@@ -14,8 +14,7 @@
                 rotateY: 0,
                 rotateZ:0,
                 rotate:0,
-                scale:1,
-                mdText: false
+                scale:1
             },
             observe: {
                 x: 'setPosition',
@@ -28,12 +27,12 @@
                 scale: 'setPosition'
             },
             setPosition: function(){
-                css(this, {
+                this.css(this, {
                     position: "absolute",
                     transform: "translate(-50%,-50%)" +
-                    translate({x: this.x, y: this.y, z: this.z}) +
-                    rotate({x:this.rotateX, y:this.rotateY, z:this.rotateZ}) +
-                    scale(this.scale),
+                    this.translateCSS({x: this.x, y: this.y, z: this.z}) +
+                    this.rotateCSS({x:this.rotateX, y:this.rotateY, z:this.rotateZ}) +
+                    this.scaleCSS(this.scale),
                     transformStyle: "preserve-3d"
                 });
             }
