@@ -4,9 +4,6 @@
     <script>
         Polymer({
             ready: function() {
-                if (typeof (marked) === "function" && this.mdText){
-                    this.innerHTML = marked(this.innerHTML);
-                }
                 this.setPosition();
             },
             publish: {

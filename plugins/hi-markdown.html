@@ -1,1 +1,15 @@
 <script src="../../marked/lib/marked.js"></script>
+
+<script>
+
+    hi.ready(function () {
+        'use strict';
+        if (typeof (marked) === "function") {
+            let eles = document.querySelectorAll('[data-markdown]');
+            for (let i = 0; i < eles.length; i++) {
+                let ele = eles[i];
+                ele.innerHTML = marked(ele.innerHTML);
+            }
+        }
+    })
+</script>
