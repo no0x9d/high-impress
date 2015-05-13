@@ -184,7 +184,7 @@
                     // And it has to be set after animation finishes, because in Chrome it
                     // makes transtion laggy.
                     // BUG: http://code.google.com/p/chromium/issues/detail?id=62820
-                    this.addEventListener("high-impress:stepenter", function (event) {
+                    this.addEventListener("enter", function (event) {
                         window.location.hash = lastHash = "#/" + event.target.id;
                     }, false);
 
@@ -313,9 +313,16 @@
 
                     var targetScale = target.scale * windowScale;
 
+                    // reference to last entered step
+                    var lastEntered = null;
+
                     // trigger leave of currently active element (if it's not the same step again)
                     if (activeStep && activeStep !== el) {
-//                        onStepLeave(activeStep);
+                        //only if the current step is also the last step entered trigger 'leave' event
+                        if (lastEntered === activeStep) {
+                            lastEntered = null;
+                            activeStep.fire('leave')
+                        }
                     }
 
                     // Now we alter transforms of `root` and `canvas` to trigger transitions.
@@ -344,7 +351,7 @@
                     //
                     // If there is no change in scale or no change in rotation and translation, it means there was actually
                     // no delay - because there was no transition on `root` or `canvas` elements.
-                    // We want to trigger `high-impress:stepenter` event in the correct moment, so here we compare the current
+                    // We want to trigger `enter` event in the correct moment, so here we compare the current
                     // and target values to check if delay should be taken into account.
                     //
                     // I know that this `if` statement looks scary, but it's pretty simple when you know what is going on
@@ -360,7 +367,7 @@
                     this.currentState = target;
                     this.activeStep = el;
 
-                    // And here is where we trigger `high-impress:stepenter` event.
+                    // And here is where we trigger `enter` event.
                     // We simply set up a timeout to fire it taking transition duration (and possible delay) into account.
                     //
                     // I really wanted to make it in more elegant way. The `transitionend` event seemed to be the best way
@@ -374,8 +381,10 @@
                     // version 0.5.2 of impress.js: http://github.com/bartaz/impress.js/blob/0.5.2/js/impress.js
                     window.clearTimeout(this.stepEnterTimeout);
                     this.stepEnterTimeout = window.setTimeout(function () {
-//                        onStepEnter(activeStep);
-                        el.fire('high-impress:stepenter');
+                        if (lastEntered !== activeStep) {
+                            lastEntered = activeStep;
+                            activeStep.fire('enter');
+                        }
                     }, duration + delay);
 
                     return el;
@@ -394,7 +403,7 @@ Navigation API
     prevSubstep
 Event API
     onleaving Step
-    leaving Step
+    (x) leaving Step
     onenter Step
     (x) enter Step
 Status API
@@ -406,6 +415,8 @@ Status API
 
 Features
     (x) Markdown Elements
+    Fast-Forward to state of actual setp after reload
+    auto positions for steps
 
 
 -->
