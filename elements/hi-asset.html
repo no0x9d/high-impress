@@ -19,15 +19,19 @@
             Polymer({
                 show: function () {
                     setState('show', this);
+                    this.fire('show');
                 },
                 hide: function () {
                     setState('hide', this);
+                    this.fire('hide');
                 },
                 fadeIn: function (timer) {
                     setState('fade-in', this);
+                    this.fire('fade-in');
                 },
                 fadeOut: function (timer) {
                     setState('fade-out', this);
+                    this.fire('fade-out');
                 }
             });
         })();
