@@ -36,7 +36,7 @@
         return document.getElementById(id);
     }
 
-    //document ready handler from stackoverflow
+    //polymer ready handler based on code from stackoverflow
     //http://stackoverflow.com/questions/9899372/pure-javascript-equivalent-to-jquerys-ready-how-to-call-a-function-when-the/13456810#13456810
     var readyHandlers = [];
 
@@ -45,15 +45,21 @@
         handleState();
     }
 
+    var polymerReady = false;
+
+    window.addEventListener('polymer-ready', function (e) {
+        polymerReady = true;
+        handleState();
+    });
+
     function handleState() {
-        if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
+        if (polymerReady) {
             while (readyHandlers.length > 0) {
                 readyHandlers.shift()();
             }
         }
     }
 
-    document.onreadystatechange = handleState;
 
     api.ready = ready;
     api.$$ = $$;
