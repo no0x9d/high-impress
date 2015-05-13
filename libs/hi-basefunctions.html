@@ -4,6 +4,16 @@
     <script>
         Polymer({
 
+            //shorthand for addEventListener
+            on: function addEventListener(event, cb, capture){
+                this.addEventListener(event, cb, capture);
+            },
+
+            //shorthand for removeEventListener
+            off: function (event, cb) {
+                this.removeEventListener(event, cb)
+            },
+
             // `pfx` is a function that takes a standard CSS property name as a parameter
             // and returns it's prefixed version valid for current browser it runs in.
             // The code is heavily inspired by Modernizr http://www.modernizr.com/
