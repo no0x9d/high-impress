@@ -28,7 +28,7 @@
                 if (typeof step === "number") {
                     step = step < 0 ? steps[steps.length + step] : steps[step];
                 } else if (typeof step === "string") {
-                    step = byId(step);
+                    step = hi.byId(step);
                 }
                 return (step && step.id) ? step : null;
             };
@@ -313,14 +313,11 @@
 
                     var targetScale = target.scale * windowScale;
 
-                    // reference to last entered step
-                    var lastEntered = null;
-
                     // trigger leave of currently active element (if it's not the same step again)
                     if (activeStep && activeStep !== el) {
                         //only if the current step is also the last step entered trigger 'leave' event
-                        if (lastEntered === activeStep) {
-                            lastEntered = null;
+                        if (root.lastEntered === activeStep) {
+                            root.lastEntered = null;
                             activeStep.fire('leave')
                         }
                     }
@@ -365,7 +362,7 @@
 
                     // store current state
                     this.currentState = target;
-                    this.activeStep = el;
+                    this.activeStep = activeStep = el;
 
                     // And here is where we trigger `enter` event.
                     // We simply set up a timeout to fire it taking transition duration (and possible delay) into account.
@@ -381,8 +378,8 @@
                     // version 0.5.2 of impress.js: http://github.com/bartaz/impress.js/blob/0.5.2/js/impress.js
                     window.clearTimeout(this.stepEnterTimeout);
                     this.stepEnterTimeout = window.setTimeout(function () {
-                        if (lastEntered !== activeStep) {
-                            lastEntered = activeStep;
+                        if (root.lastEntered !== activeStep) {
+                            root.lastEntered = activeStep;
                             activeStep.fire('enter');
                         }
                     }, duration + delay);
@@ -408,7 +405,10 @@ Event API
     (x) enter Step
 Status API
     (x) actual Step
+    actual index of step
+    actual number of step
     (x) number of Steps
+    (x) list of steps
     Printing Mode
     Black Key
     Presenter Mode
@@ -417,6 +417,7 @@ Features
     (x) Markdown Elements
     Fast-Forward to state of actual setp after reload
     auto positions for steps
+    selected steps and sequence per api call
 
 
 -->
