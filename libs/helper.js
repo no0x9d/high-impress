@@ -9,6 +9,9 @@
         else if (typeof arg1 === 'function') {
             ready(arg1);
         }
+        else if (Array.isArray(arg1)){
+            setSteps(arg1, arg2)
+        }
     };
 
     // `arraify` takes an array-like object and turns it into real Array
@@ -60,12 +63,37 @@
         }
     }
 
+    function setStepsApi(steps, presentation){
+        if(polymerReady){
+            setSteps(steps, presentation);
+        }else {
+            presentation.addEventListener('hi-presentation:dom-ready', function () {
+                setSteps(steps, presentation)
+            });
+        }
+    }
+
+    function setSteps(steps, presentation) {
+        var stepElements = [];
+        for (var i = 0; i < steps.length; i++) {
+            var step = $(steps[i]);
+            if (step) {
+                stepElements.push(step);
+            }
+        }
+        if (stepElements.length > 0) {
+            presentation.steps = stepElements;
+            presentation.goto(stepElements[0], 0)
+        }
+    }
+
 
     api.ready = ready;
     api.$$ = $$;
     api.$ = $;
     api.byId = byId;
     api.arrayify = arrayify;
+    api.setSteps = setStepsApi;
 
     window.HighImpress = api;
     window.hi = window.hi || api;

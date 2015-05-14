@@ -219,9 +219,10 @@
                     }, 250), false);
                 },
                 domReady: function () {
+                    this.fire('hi-presentation:dom-ready');
                     // every element with a hi-step attribute can be a possible step
                     // if it also has all additional needed attributes
-                    this.steps = hi.$$("[hi-step]", this);
+                    this.steps = this.steps || hi.$$("[hi-step]", this);
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
@@ -417,7 +418,8 @@ Features
     (x) Markdown Elements
     Fast-Forward to state of actual setp after reload
     auto positions for steps
-    selected steps and sequence per api call
+    (x) selected steps and sequence per api call
+    currentstep/numSteps Overlay for hi-step
 
 
 -->
