@@ -12,6 +12,9 @@
         else if (Array.isArray(arg1)){
             setSteps(arg1, arg2)
         }
+        else if (typeof arg1 === 'undefined') {
+            return getPresentation();
+        }
     };
 
     // `arraify` takes an array-like object and turns it into real Array
@@ -87,6 +90,18 @@
         }
     }
 
+    function getPresentation() {
+        var element = document.currentScript;
+        while (element.nodeName.toLowerCase() !== "hi-presentation") {
+            if (element === document.documentElement) {
+                return;
+            } else {
+                element = element.parentNode;
+            }
+        }
+        return element;
+
+    }
 
     api.ready = ready;
     api.$$ = $$;
@@ -94,6 +109,7 @@
     api.byId = byId;
     api.arrayify = arrayify;
     api.setSteps = setStepsApi;
+    api.getPresentation = getPresentation;
 
     window.HighImpress = api;
     window.hi = window.hi || api;
