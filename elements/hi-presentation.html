@@ -81,6 +81,7 @@
                         transition: "all 0s ease-in-out",
                         transformStyle: "preserve-3d"
                     };
+                    var blackoutId = "blackout";
 
                     this.css(body, {
                         height: "100%",
@@ -102,6 +103,12 @@
                         scale: 1
                     };
 
+                    var div = document.createElement('div');
+                    div.id = blackoutId;
+                    div.setAttribute("style", "display: none; position:fixed; height: 100vh; width: 100vw; background: black");
+
+                    document.body.appendChild(div);
+
                     //listen for initialization of steps. when all steps are ready go to the actual step from the
                     //url or go to the first step in the presentation
 //                    this.addEventListener("high-impress:stepInitialized", function (){
@@ -116,8 +123,8 @@
                         var target = event.target;
                         // find closest step element that is not active
                         // TODO: query selector does not work with extended step elements
-                        while ( !(target.nodeName.toLowerCase() === "hi-step" && !target.classList.contains("active")) &&
-                        (target !== document.documentElement) ) {
+                        while (!(target.nodeName.toLowerCase() === "hi-step" && !target.classList.contains("active")) &&
+                        (target !== document.documentElement)) {
                             target = target.parentNode;
                         }
 
@@ -127,10 +134,20 @@
                     }, false);
 
                     // KEYBOARD NAVIGATION HANDLERS
+                    
+                    function toggleBlackout() {
+                        var blackout = hi('#' + blackoutId);
+                        if (blackout.style.display === "block") {
+                            blackout.style.display = 'none';
+                        }else{
+                            blackout.style.display = 'block';
+                        }
+                    }
 
                     // Prevent default keydown action when one of supported key is pressed.
-                    document.addEventListener("keydown", function ( event ) {
-                        if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
+                    document.addEventListener("keydown", function (event) {
+                        if (event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40
+                                || event.keyCode === 66 || event.keyCode === 85)) {
                             event.preventDefault();
                         }
                     }, false);
@@ -150,10 +167,10 @@
                     //   positioning. I didn't want to just prevent this default action, so I used [tab]
                     //   as another way to moving to next step... And yes, I know that for the sake of
                     //   consistency I should add [shift+tab] as opposite action...
-                    document.addEventListener("keyup", function ( event ) {
-                        if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 )
-                                || (event.keyCode >= 37 && event.keyCode <= 40) || event.keyCode == 85 ) {
-                            switch( event.keyCode ) {
+                    document.addEventListener("keyup", function (event) {
+                        if (event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 )
+                                || (event.keyCode >= 37 && event.keyCode <= 40) || event.keyCode == 66 || event.keyCode == 85) {
+                            switch (event.keyCode) {
                                 case 33: // pg up
                                 case 37: // left
                                 case 38: // up
@@ -167,6 +184,9 @@
                                 case 39: // right
                                 case 32: // space
                                     root.nextSubstep();
+                                    break;
+                                case 66:
+                                        toggleBlackout();
                                     break;
                                 case 85: // U
 //                                    this.updateStatus();
