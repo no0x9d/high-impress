@@ -249,6 +249,12 @@
                 nextStep: function next(){
                     var steps = this.steps;
                     var next = 0;
+                    if ( this.activeStep && this.activeStep.nextStep) {
+                        var el = this.goto(this.activeStep.nextStep);
+                        if(el){
+                            return el;
+                        }
+                    }
                     if ( this.activeStep ) {
                         next = steps.indexOf(this.activeStep) + 1;
                     }
@@ -262,6 +268,12 @@
                 },
                 prevStep: function prev(){
                     var steps = this.steps;
+                    if ( this.activeStep && this.activeStep.prevStep) {
+                        var el = this.goto(this.activeStep.prevStep);
+                        if(el){
+                            return el;
+                        }
+                    }
                     var prev = steps.indexOf(this.activeStep) - 1;
                         prev = prev >= 0 ? steps[prev] : steps[steps.length - 1];
 
