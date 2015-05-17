@@ -136,7 +136,7 @@
                     // KEYBOARD NAVIGATION HANDLERS
                     
                     function toggleBlackout() {
-                        var blackout = hi('#' + blackoutId);
+                        var blackout = hi.byId(blackoutId);
                         if (blackout.style.display === "block") {
                             blackout.style.display = 'none';
                         }else{
