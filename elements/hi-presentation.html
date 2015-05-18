@@ -57,6 +57,18 @@
                 return scale;
             };
 
+            var autoPosition = function (steps, presentation) {
+                var width = presentation.width;
+                //starting at 1 because the first element can't be auto positioned
+                for(var i = 1 ; i < steps.length ; i++){
+                    var step = steps[i];
+                        if(step.autoPosition){
+                            var prevStep = steps[i-1];
+                            step.x = prevStep.x + width + (step.autoMargin || presentation.autoMargin);
+                        }
+                }
+            };
+
             // Run for every instance of the element that's created.
             Polymer({
                 publish: {
@@ -65,7 +77,8 @@
                     maxScale: 1,
                     minScale: 0,
                     perspective: 1000,
-                    transitionDuration: 1000
+                    transitionDuration: 1000,
+                    autoMargin: 0
                 },
                 computed: {
                     numStep: 'steps.length'
@@ -243,6 +256,8 @@
                     // every element with a hi-step attribute can be a possible step
                     // if it also has all additional needed attributes
                     this.steps = this.steps || hi.$$("[hi-step]", this);
+
+                    autoPosition(this.steps, this);
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
