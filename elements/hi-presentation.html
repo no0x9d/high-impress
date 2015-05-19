@@ -69,6 +69,30 @@
                 }
             };
 
+            var setIds = function(steps){
+                for(var i = 1 ; i < steps.length ; i++){
+                    var step = steps[i];
+                    if(!step.id){
+                        var id = 'hi-step-' + (i + 1);
+                        step.id = hi.byId(id) ? 'hi-step-' + Math.random().toString(36).substring(2, 7) : id;
+                    }
+                }
+            };
+
+            var setSteps = function (steps, presentation) {
+                var stepElements = [];
+                for (var i = 0; i < steps.length; i++) {
+                    var step = hi(steps[i]);
+                    if (step) {
+                        stepElements.push(step);
+                    }
+                }
+                if (stepElements.length > 0) {
+                    presentation.steps = stepElements;
+                    presentation.goto(stepElements[0], 0)
+                }
+            };
+
             // Run for every instance of the element that's created.
             Polymer({
                 publish: {
@@ -258,6 +282,8 @@
                     this.steps = this.steps || hi.$$("[hi-step]", this);
 
                     autoPosition(this.steps, this);
+
+                    setIds(this.steps);
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
