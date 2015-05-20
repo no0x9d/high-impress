@@ -66,27 +66,13 @@
         }
     }
 
-    function setStepsApi(steps, presentation){
+    function setSteps(steps, presentation){
         if(polymerReady){
-            setSteps(steps, presentation);
+            presentation.setSteps(steps);
         }else {
             presentation.addEventListener('hi-presentation:dom-ready', function () {
-                setSteps(steps, presentation)
+                presentation.setSteps(steps)
             });
-        }
-    }
-
-    function setSteps(steps, presentation) {
-        var stepElements = [];
-        for (var i = 0; i < steps.length; i++) {
-            var step = $(steps[i]);
-            if (step) {
-                stepElements.push(step);
-            }
-        }
-        if (stepElements.length > 0) {
-            presentation.steps = stepElements;
-            presentation.goto(stepElements[0], 0)
         }
     }
 
@@ -108,7 +94,7 @@
     api.$ = $;
     api.byId = byId;
     api.arrayify = arrayify;
-    api.setSteps = setStepsApi;
+    api.setSteps = setSteps;
     api.getPresentation = getPresentation;
 
     window.HighImpress = api;

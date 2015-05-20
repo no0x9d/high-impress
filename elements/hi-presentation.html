@@ -82,7 +82,14 @@
             var setSteps = function (steps, presentation) {
                 var stepElements = [];
                 for (var i = 0; i < steps.length; i++) {
-                    var step = hi(steps[i]);
+                    var step;
+                    // query selector of a html element
+                    if(typeof steps[i] === 'string'){
+                        step = hi.byId(steps[i]);
+                        //allready a html element with id
+                    } else if( typeof steps[i] === 'object' && steps[i].id){
+                        step = steps[i];
+                    }
                     if (step) {
                         stepElements.push(step);
                     }
@@ -277,13 +284,13 @@
                 },
                 domReady: function () {
                     this.fire('hi-presentation:dom-ready');
-                    // every element with a hi-step attribute can be a possible step
-                    // if it also has all additional needed attributes
-                    this.steps = this.steps || hi.$$("[hi-step]", this);
 
-                    autoPosition(this.steps, this);
-
-                    setIds(this.steps);
+                    if(!this.steps){
+                        // every element with a hi-step attribute can be a possible step
+                        // if it also has all additional needed attributes
+                        var steps = hi.$$("[hi-step]", this);
+                        this.setSteps(steps);
+                    }
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
@@ -459,6 +466,11 @@
                     }, duration + delay);
 
                     return el;
+                },
+                setSteps: function (steps) {
+                    setIds(steps);
+                    autoPosition(steps, this);
+                    setSteps(steps, this);
                 }
             });
         })();
