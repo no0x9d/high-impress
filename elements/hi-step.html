@@ -15,8 +15,21 @@
                 ready: function () {
                     this.super();
 
+                    // initialize li elements of lists with .substeps
+                    var substeps = hi.$$(".substeps", this);
+                    if(substeps) {
+                      substeps.forEach(function (subList) {
+                        var subLi = hi.$$("li", subList);
+                        if(subLi){
+                          subLi.forEach(function (li) {
+                            li.classList.add("substep");
+                          })
+                        }
+                      })
+                    }
+
                     // initialize state of substeps to 'future'
-                    var substeps = hi.$$(".substep", this);
+                    substeps = hi.$$(".substep", this);
                     if (substeps) {
                         substeps.forEach(function (sub) {
                             sub.classList.add("future");
@@ -60,4 +73,3 @@
         })(window);
     </script>
 </polymer-element>
-
