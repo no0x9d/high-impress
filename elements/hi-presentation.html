@@ -288,11 +288,13 @@
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
-                nextStep: function next(){
+                nextStep: function next(duration){
+                    var duration = isNaN(duration) ? this.activeStep.duration : duration;
                     var steps = this.steps;
                     var next = 0;
+                    //checks for a nextStep attribute on the active step
                     if ( this.activeStep && this.activeStep.nextStep) {
-                        var el = this.goto(this.activeStep.nextStep);
+                        var el = this.goto(this.activeStep.nextStep, duration);
                         if(el){
                             return el;
                         }
@@ -301,9 +303,9 @@
                         next = steps.indexOf(this.activeStep) + 1;
                     }
                     next = next < steps.length ? steps[ next ] : steps[ 0 ];
-                    return this.goto(next, this.activeStep.transitionDuration);
+                    return this.goto(next, duration);
                 },
-                nextSubstep: function () {
+                nextSubstep: function (duration) {
                     if(!this.activeStep || !this.activeStep.nextSubstep()){
                         this.nextStep();
                     }
