@@ -310,10 +310,11 @@
                         return this.nextStep(duration);
                     }
                 },
-                prevStep: function prev(){
+                prevStep: function prev(duration){
                     var steps = this.steps;
+                    //checks for a valid prevStep attribute on the active step
                     if ( this.activeStep && this.activeStep.prevStep) {
-                        var el = this.goto(this.activeStep.prevStep);
+                        var el = this.goto(this.activeStep.prevStep, duration);
                         if(el){
                             return el;
                         }
@@ -321,7 +322,7 @@
                     var prev = steps.indexOf(this.activeStep) - 1;
                         prev = prev >= 0 ? steps[prev] : steps[steps.length - 1];
 
-                    return this.goto(prev);
+                    return this.goto(prev, duration);
                 },
                 goto : function goto(el, duration) {
 
