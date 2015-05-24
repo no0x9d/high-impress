@@ -1,6 +1,6 @@
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="hi-step" extends="hi-base" hi-step attributes="transitionDuration">
+<polymer-element name="hi-step" extends="hi-base" hi-step attributes="transitionDuration nextStep prevStep">
     <script>
         (function hiStep(window) {
 
@@ -8,10 +8,6 @@
             var hi = window.HighImpress;
 
             Polymer({
-                publish: {
-                    nextStep: "",
-                    prevStep: ""
-                },
                 ready: function () {
                     this.super();
 
