@@ -13,13 +13,6 @@
             // get a reference on our helper api
             var hi = window.HighImpress;
 
-            // `toNumber` takes a value given as `numeric` parameter and tries to turn
-            // it into a number. If it is not possible it returns 0 (or other value
-            // given as `fallback`).
-            var toNumber = function toNumber(numeric, fallback) {
-                return isNaN(numeric) ? (fallback || 0) : Number(numeric);
-            };
-
             // `getStep` is a helper function that returns a step element defined by parameter.
             // If a number is given, step with index given by the number is returned, if a string
             // is given step element with such id is returned, if DOM element is given it is returned
@@ -308,7 +301,7 @@
                         next = steps.indexOf(this.activeStep) + 1;
                     }
                     next = next < steps.length ? steps[ next ] : steps[ 0 ];
-                    return this.goto(next);
+                    return this.goto(next, this.activeStep.transitionDuration);
                 },
                 nextSubstep: function () {
                     if(!this.activeStep || !this.activeStep.nextSubstep()){
@@ -384,7 +377,7 @@
                     // with scaling down and move and rotation are delayed.
                     var zoomin = target.scale >= currentState.scale;
 
-                    duration = toNumber(duration, this.transitionDuration);
+                    duration = this.toNumber(duration, this.transitionDuration);
                     var delay = (duration / 2);
 
                     // if the same step is re-selected, force computing window scaling,

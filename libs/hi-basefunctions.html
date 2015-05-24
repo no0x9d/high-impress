@@ -14,6 +14,14 @@
                 this.removeEventListener(event, cb)
             },
 
+
+            // `toNumber` takes a value given as `numeric` parameter and tries to turn
+            // it into a number. If it is not possible it returns 0 (or other value
+            // given as `fallback`).
+            toNumber:  function toNumber(numeric, fallback) {
+                return isNaN(numeric) ? (fallback || 0) : Number(numeric);
+            },
+
             // `pfx` is a function that takes a standard CSS property name as a parameter
             // and returns it's prefixed version valid for current browser it runs in.
             // The code is heavily inspired by Modernizr http://www.modernizr.com/
