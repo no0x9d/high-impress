@@ -307,7 +307,7 @@
                 },
                 nextSubstep: function (duration) {
                     if(!this.activeStep || !this.activeStep.nextSubstep()){
-                        this.nextStep();
+                        return this.nextStep(duration);
                     }
                 },
                 prevStep: function prev(){
