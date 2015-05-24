@@ -67,6 +67,7 @@
     }
 
     function setSteps(steps, presentation){
+        presentation = presentation || getPresentation();
         if(polymerReady){
             presentation.setSteps(steps);
         }else {
