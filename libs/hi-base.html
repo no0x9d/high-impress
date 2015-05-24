@@ -29,6 +29,7 @@
                 scale: 'setPosition'
             },
             setPosition: function(){
+                this.rotateZ = this.rotate = this.rotateZ || this.rotate;
                 this.css(this, {
                     position: "absolute",
                     transform: "translate(-50%,-50%)" +
