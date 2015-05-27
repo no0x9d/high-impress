@@ -444,6 +444,11 @@
                     this.currentState = target;
                     this.activeStep = activeStep = el;
 
+                    // Fire a entering event after the transition started. This may be important, because it's not sure
+                    // that the now step is entered. The transition is canceled when a goto is triggered while the animation
+                    // lasts, omitting a enter event and just triggers a new leave event.
+                    activeStep.fire('entering');
+
                     // And here is where we trigger `enter` event.
                     // We simply set up a timeout to fire it taking transition duration (and possible delay) into account.
                     //
