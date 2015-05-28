@@ -2,7 +2,7 @@
 
 A HTML5 & CSS3 presentation framework based on the great impress.js that utilizes the power of webcomponents to bring you easy to build presentations.
 
-You can find the full documentation on how to use high-impress in the [[Wiki|Home]]|]]
+You can find the full documentation on how to use high-impress in the [Wiki](https://github.com/no0x9d/high-impress/wiki)
 
 ## Get high-impress
 ### Get the template with batteries included (recommend)
@@ -61,4 +61,4 @@ Now view your presentation at [http://localhost:8080](http://localhost:8080)
 
 ## Build your presentation
 
-Until I update the README, please consult the [[Beginners guide|Beginners-guide]].
+Until I update the README, please consult the [Beginners guide](https://github.com/no0x9d/high-impress/wiki/Beginners-Guide).
