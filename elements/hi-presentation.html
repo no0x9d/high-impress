@@ -53,19 +53,20 @@
             var autoPosition = function (steps, presentation) {
                 var width = presentation.width;
                 //starting at 1 because the first element can't be auto positioned
-                for(var i = 1 ; i < steps.length ; i++){
+                for (var i = 1; i < steps.length; i++) {
                     var step = steps[i];
-                        if(step.autoPosition || (presentation.autoPosition && step.x == 0 && step.y==0 )){
-                            var prevStep = steps[i-1];
-                            step.x = prevStep.x + width + (step.autoMargin || presentation.autoMargin);
-                        }
+                    if (step.autoPosition || (presentation.autoPosition && step.x == 0 && step.y == 0 )) {
+                        step.autoPosition = step.autoPosition || true;
+                        var prevStep = steps[i - 1];
+                        step.x = prevStep.x + width + (step.autoMargin || presentation.autoMargin) * step.scale;
+                    }
                 }
             };
 
-            var setIds = function(steps){
-                for(var i = 0 ; i < steps.length ; i++){
+            var setIds = function (steps) {
+                for (var i = 0; i < steps.length; i++) {
                     var step = steps[i];
-                    if(!step.id){
+                    if (!step.id) {
                         var id = 'hi-step-' + (i + 1);
                         step.id = hi.byId(id) ? 'hi-step-' + Math.random().toString(36).substring(2, 7) : id;
                     }
@@ -113,7 +114,7 @@
                 computed: {
                     numStep: 'steps.length'
                 },
-                ready: function() {
+                ready: function () {
                     var root = this;
                     var canvas = this.$.canvas;
                     var body = document.body;
@@ -123,8 +124,8 @@
                         transformOrigin: "top left",
                         transition: "all 0s ease-in-out",
                         transformStyle: "preserve-3d",
-                        width: this.width +"px",
-                        height: this.height +"px"
+                        width: this.width + "px",
+                        height: this.height + "px"
                     };
                     var blackoutId = "blackout";
 
@@ -143,8 +144,8 @@
 
                     // set a default initial state of the canvas
                     this.currentState = {
-                        translate: { x: 0, y: 0, z: 0 },
-                        rotate: { x: 0, y: 0, z: 0 },
+                        translate: {x: 0, y: 0, z: 0},
+                        rotate: {x: 0, y: 0, z: 0},
                         scale: 1
                     };
 
@@ -164,7 +165,7 @@
 //                    });
 
                     // delegated handler for clicking on step elements
-                    document.addEventListener("click", function ( event ) {
+                    document.addEventListener("click", function (event) {
                         var target = event.target;
                         // find closest step element that is not active
                         // TODO: query selector does not work with extended step elements
@@ -173,18 +174,18 @@
                             target = target.parentNode;
                         }
 
-                        if ( root.goto(target) ) {
+                        if (root.goto(target)) {
                             event.preventDefault();
                         }
                     }, false);
 
                     // KEYBOARD NAVIGATION HANDLERS
-                    
+
                     function toggleBlackout() {
                         var blackout = hi.byId(blackoutId);
                         if (blackout.style.display === "block") {
                             blackout.style.display = 'none';
-                        }else{
+                        } else {
                             blackout.style.display = 'block';
                         }
                     }
@@ -231,7 +232,7 @@
                                     root.nextSubstep();
                                     break;
                                 case 66:
-                                        toggleBlackout();
+                                    toggleBlackout();
                                     break;
                                 case 85: // U
 //                                    this.updateStatus();
@@ -280,13 +281,13 @@
                     // rescale presentation when window is resized
                     window.addEventListener("resize", throttle(function () {
                         // force going to active step again, to trigger rescaling
-                        root.goto( root.activeStep, 500 );
+                        root.goto(root.activeStep, 500);
                     }, 250), false);
                 },
                 domReady: function () {
                     this.fire('hi-presentation:dom-ready');
 
-                    if(!this.steps){
+                    if (!this.steps) {
                         // every element with a hi-step attribute can be a possible step
                         // if it also has all additional needed attributes
                         var steps = hi.$$("[hi-step]", this);
@@ -295,43 +296,43 @@
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
-                nextStep: function next(duration){
+                nextStep: function next(duration) {
                     var duration = isNaN(duration) ? this.activeStep.duration : duration;
                     var steps = this.steps;
                     var next = 0;
                     //checks for a nextStep attribute on the active step
-                    if ( this.activeStep && this.activeStep.nextStep) {
+                    if (this.activeStep && this.activeStep.nextStep) {
                         var el = this.goto(this.activeStep.nextStep, duration);
-                        if(el){
+                        if (el) {
                             return el;
                         }
                     }
-                    if ( this.activeStep ) {
+                    if (this.activeStep) {
                         next = steps.indexOf(this.activeStep) + 1;
                     }
-                    next = next < steps.length ? steps[ next ] : steps[ 0 ];
+                    next = next < steps.length ? steps[next] : steps[0];
                     return this.goto(next, duration);
                 },
                 nextSubstep: function (duration) {
-                    if(!this.activeStep || !this.activeStep.nextSubstep()){
+                    if (!this.activeStep || !this.activeStep.nextSubstep()) {
                         return this.nextStep(duration);
                     }
                 },
-                prevStep: function prev(duration){
+                prevStep: function prev(duration) {
                     var steps = this.steps;
                     //checks for a valid prevStep attribute on the active step
-                    if ( this.activeStep && this.activeStep.prevStep) {
+                    if (this.activeStep && this.activeStep.prevStep) {
                         var el = this.goto(this.activeStep.prevStep, duration);
-                        if(el){
+                        if (el) {
                             return el;
                         }
                     }
                     var prev = steps.indexOf(this.activeStep) - 1;
-                        prev = prev >= 0 ? steps[prev] : steps[steps.length - 1];
+                    prev = prev >= 0 ? steps[prev] : steps[steps.length - 1];
 
                     return this.goto(prev, duration);
                 },
-                goto : function goto(el, duration) {
+                goto: function goto(el, duration) {
 
                     var activeStep = this.activeStep;
                     var currentState = this.currentState;
@@ -491,32 +492,31 @@
 
 <!--
 Navigation API
-    (x) goto
-    (x) next
-    (x) prev
-    (x) nextSupstep
-    prevSubstep
+    [x] goto
+    [x] next
+    [x] prev
+    [x] nextSupstep
+    [] prevSubstep
 Event API
-    onleaving Step
-    (x) leaving Step
-    onenter Step
-    (x) enter Step
+    [x] leaving Step
+    [] entering Step
+    [x] enter Step
 Status API
-    (x) actual Step
-    actual index of step
-    actual number of step
-    (x) number of Steps
-    (x) list of steps
-    Printing Mode
-    Black Key
-    Presenter Mode
+    [x] actual Step
+    [] actual index of step
+    [] actual number of step
+    [x] number of Steps
+    [x] list of steps
+    [] Printing Mode
+    [] Black Key
+    [] Presenter Mode
 
 Features
-    (x) Markdown Elements
-    Fast-Forward to state of actual setp after reload
-    auto positions for steps
-    (x) selected steps and sequence per api call
-    currentstep/numSteps Overlay for hi-step
+    [x] Markdown Elements
+    [] Fast-Forward to state of actual setp after reload
+    [] auto positions for steps
+    [x] selected steps and sequence per api call
+    [] currentstep/numSteps Overlay for hi-step
 
 
 -->
