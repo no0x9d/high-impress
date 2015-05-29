@@ -73,25 +73,30 @@
             };
 
             var setSteps = function (steps, presentation) {
+                if (steps.length > 0) {
+                    presentation.steps = steps;
+                }
+            };
+
+            function getStepsFromArray(steps) {
                 var stepElements = [];
                 for (var i = 0; i < steps.length; i++) {
                     var step;
                     // query selector of a html element
-                    if(typeof steps[i] === 'string'){
+                    if (typeof steps[i] === 'string') {
                         step = hi.byId(steps[i]);
                         //allready a html element with id
-                    } else if( typeof steps[i] === 'object' && steps[i].id){
+                    } else if (typeof steps[i] === 'object') {
                         step = steps[i];
+                    } else if (typeof steps[i] === 'number') {
+                        step = this.steps[steps[i] - 1];
                     }
                     if (step) {
                         stepElements.push(step);
                     }
                 }
-                if (stepElements.length > 0) {
-                    presentation.steps = stepElements;
-                    presentation.goto(stepElements[0], 0)
-                }
-            };
+                return stepElements;
+            }
 
             // Run for every instance of the element that's created.
             Polymer({
@@ -472,9 +477,12 @@
                     return el;
                 },
                 setSteps: function (steps) {
-                    setIds(steps);
-                    autoPosition(steps, this);
-                    setSteps(steps, this);
+                    var stepElements = getStepsFromArray.call(this, steps);
+                    setIds(stepElements);
+                    autoPosition(stepElements, this);
+                    setSteps(stepElements, this);
+
+                    this.goto(getElementFromHash() || this.steps[0], 0);
                 }
             });
         })();
