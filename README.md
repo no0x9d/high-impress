@@ -2,7 +2,18 @@
 
 A HTML5 & CSS3 presentation framework based on the great impress.js that utilizes the power of webcomponents to bring you easy to build presentations.
 
-You can find the full documentation on how to use high-impress in the [Wiki](https://github.com/no0x9d/high-impress/wiki)
+While impress.js takes a more puristic approach with only basic functions and clean, well documented code, it is somewhat difficult to use if you are not a web designer.   
+high-impress on the other hand aims to be easy to use, even if you are new to web technologies. It also tries to bring all the functionality you need, while also remaining expendable for personal customisations.
+
+> You can find the full documentation on how to use high-impress in the [Wiki](https://github.com/no0x9d/high-impress/wiki)
+
+## Browser compatibility
+
+As of now, only the newest Version of Chrome is supported. My plan is, to support at least the latest Version of Firefox when I approach a Version 1.0 release.
+
+Chrome | Firefox | IE | Safari
+-------|---------|----|-------
+YES | NO | NO |NO
 
 ## Get high-impress
 ### Get the template with batteries included (recommend)
@@ -62,3 +73,7 @@ Now view your presentation at [http://localhost:8080](http://localhost:8080)
 ## Build your presentation
 
 Until I update the README, please consult the [Beginners guide](https://github.com/no0x9d/high-impress/wiki/Beginners-Guide).
+
+## About the name
+
+The code is based on impress.js, so the second part is obvious. Now for the first part. As I described in the beginning it could be cumbersome to use impress.js, so I wanted to build a higher level of abstraction around it, to support different use cases. Also at the time I thought about creating this library I had a ride on a german thrill ride with the same name, which was quite a fun, so I stick with this name.
