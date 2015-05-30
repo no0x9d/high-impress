@@ -11,3 +11,4 @@ vendor/
 ## File-based project format:
 *.ipr
 *.iws
+.bower.json

@@ -1,9 +1,7 @@
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="hi-basefunctions">
     <script>
-        Polymer({
-
+        HighImpress.BaseFunctions = {
             //shorthand for addEventListener
             on: function addEventListener(event, cb, capture){
                 this.addEventListener(event, cb, capture);
@@ -89,7 +87,5 @@
             perspectiveCSS: function (p) {
                 return " perspective(" + p + "px) ";
             }
-        });
+        };
     </script>
-</polymer-element>
-

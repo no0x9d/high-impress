@@ -1,11 +1,13 @@
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="hi-presentation" extends="hi-basefunctions">
+<dom-module id="hi-presentation">
     <template>
         <div id="canvas">
             <content></content>
         </div>
     </template>
+</dom-module>
+
     <script>
         (function () {
             // Run once. Private and static to the element.
@@ -101,20 +103,51 @@
 
             // Run for every instance of the element that's created.
             Polymer({
-                publish: {
-                    width: 1024,
-                    height: 768,
-                    maxScale: 1,
-                    minScale: 0,
-                    perspective: 1000,
-                    transitionDuration: 1000,
-                    autoPosition: false,
-                    autoMargin: 0
+                is: "hi-presentation",
+
+                behaviors: [hi.BaseFunctions],
+
+                properties: {
+                    width: {
+                        type: Number,
+                        value: 1024
+                    },
+                    height: {
+                        type: Number,
+                        value: 768
+                    },
+                    maxScale: {
+                        type: Number,
+                        value: 1
+                    },
+                    minScale: {
+                        type: Number,
+                        value: 0
+                    },
+                    perspective: {
+                        type: Number,
+                        value: 1000
+                    },
+                    transitionDuration: {
+                        type: Number,
+                        value: 1000
+                    },
+                    autoPosition: {
+                        type: Boolean,
+                        value: false
+                    },
+                    autoMargin: {
+                        type: Number,
+                        value: 0
+                    }
                 },
-                computed: {
+
+                computedProp: {
                     numStep: 'steps.length'
                 },
+
                 ready: function () {
+                    console.log("presentation ready");
                     var root = this;
                     var canvas = this.$.canvas;
                     var body = document.body;
@@ -296,8 +329,11 @@
 
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 },
+                attached: function () {
+                    hi(this.domReady.bind(this));
+                },
                 nextStep: function next(duration) {
-                    var duration = isNaN(duration) ? this.activeStep.duration : duration;
+                    var duration = isNaN(duration) ? this.activeStep.transitionDuration : duration;
                     var steps = this.steps;
                     var next = 0;
                     //checks for a nextStep attribute on the active step
@@ -486,10 +522,8 @@
                     this.goto(getElementFromHash() || this.steps[0], 0);
                 }
             });
-        })();
-    </script>
-</polymer-element>
-
+    })();
+</script>
 <!--
 Navigation API
     [x] goto

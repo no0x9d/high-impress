@@ -1,33 +1,61 @@
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="hi-base" extends="hi-basefunctions">
     <script>
-        Polymer({
+        HighImpress.ElementBase = { // extends hi-basefunctions
             ready: function() {
                 this.setPosition();
             },
-            publish: {
-                x: 0,
-                y: 0,
-                z: 0,
-                rotateX: 0,
-                rotateY: 0,
-                rotateZ:0,
-                rotate:0,
-                scale:1,
-                autoPosition: false,
-                autoMargin:0
+            properties: {
+                x: {
+                    type: Number,
+                    value: 0,
+                    observer: "setPosition"
+                },
+                y: {
+                    type: Number,
+                    value: 0,
+                    observer: "setPosition"
+                },
+                z: {
+                    type: Number,
+                    value: 0,
+                    observer: "setPosition"
+                },
+                rotateX: {
+                    type: Number,
+                    value: 0,
+                    observer: "setPosition"
+                },
+                rotateY: {
+                    type: Number,
+                    value: 0,
+                    observer: "setPosition"
+                },
+                rotateZ: {
+                    type: Number,
+                    value: 0,
+                    observer: "setPosition"
+                },
+                rotate: {
+                    type: Number,
+                    value: 0,
+                    observer: "setPosition"
+                },
+                scale: {
+                    type: Number,
+                    value: 1,
+                    observer: "setPosition"
+                },
+                autoPosition: {
+                    type: Boolean,
+                    value: false
+                },
+                autoMargin: {
+                    type: Boolean,
+                    value: false
+                }
             },
-            observe: {
-                x: 'setPosition',
-                y: 'setPosition',
-                z: 'setPosition',
-                rotateX: 'setPosition',
-                rotateY: 'setPosition',
-                rotateZ: 'setPosition',
-                rotate: 'setPosition',
-                scale: 'setPosition'
-            },
+
             setPosition: function(){
                 this.rotateZ = this.rotate = this.rotateZ || this.rotate;
                 this.css(this, {
@@ -39,7 +67,5 @@
                     transformStyle: "preserve-3d"
                 });
             }
-        });
+        };
     </script>
-</polymer-element>
-

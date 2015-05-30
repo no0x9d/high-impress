@@ -8,6 +8,6 @@
   "main": "high-impress.html",
   "dependencies": {
     "marked": "~0.3.3",
-    "polymer": "Polymer/polymer#0.5"
+    "polymer": "Polymer/polymer#^1.0.0"
   }
 }

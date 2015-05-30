@@ -1,8 +1,9 @@
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="hi-asset" extends="hi-base">
     <script>
         (function () {
+            var hi = HighImpress;
+
             function removeClasses(element){
                 var classList = element.classList;
                 classList.remove('show');
@@ -17,6 +18,10 @@
             }
 
             Polymer({
+                is: "hi-asset",
+
+                behaviors: [hi.BaseFunctions, hi.ElementBase],
+
                 show: function () {
                     setState('show', this);
                     this.fire('show');
@@ -36,5 +41,4 @@
             });
         })();
     </script>
-</polymer-element>
 

@@ -1,6 +1,5 @@
 <link rel="import" href="../../polymer/polymer.html">
 
-<polymer-element name="hi-step" extends="hi-base" hi-step attributes="transitionDuration nextStep prevStep">
     <script>
         (function hiStep(window) {
 
@@ -8,9 +7,22 @@
             var hi = window.HighImpress;
 
             Polymer({
-                ready: function () {
-                    this.super();
+                is:"hi-step",
 
+                behaviors: [hi.BaseFunctions, hi.ElementBase],
+
+                hostAttributes: {
+                    "hi-step": true
+                },
+
+                properties:{
+                    transitionDuration: Number,
+                    nextStep: String,
+                    prevStep: String
+                },
+
+                ready: function () {
+                    console.log("step ready");
                     // initialize li elements of lists with .substeps
                     var substeps = hi.$$(".substeps", this);
                     if(substeps) {
@@ -31,9 +43,6 @@
                             sub.classList.add("future");
                         });
                     }
-                },
-                domReady: function () {
-                    this.fire('high-impress:stepInitialized');
                 },
                 nextSubstep: function () {
                     var lastSubsteps = hi.$$('.substep.present', this);
@@ -68,4 +77,3 @@
             });
         })(window);
     </script>
-</polymer-element>

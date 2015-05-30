@@ -53,7 +53,7 @@
 
     var polymerReady = false;
 
-    window.addEventListener('polymer-ready', function (e) {
+    window.addEventListener('WebComponentsReady', function (e) {
         polymerReady = true;
         handleState();
     });
