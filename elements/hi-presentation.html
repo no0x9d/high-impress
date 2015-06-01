@@ -468,7 +468,7 @@
                     // if the same step is re-selected, force computing window scaling,
                     // because it is likely to be caused by window resize
                     if (el === activeStep) {
-                        windowScale = computeWindowScale(this);
+                        windowScale = this._windowScale = computeWindowScale(this);
                     }
 
                     var targetScale = target.scale * windowScale;
