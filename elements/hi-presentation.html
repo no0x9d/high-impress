@@ -53,14 +53,22 @@
             };
 
             var autoPosition = function (steps, presentation) {
-                var width = presentation.width;
+                // calculate the width for the previous and the actual element, so we use just half of the width
+                var width = presentation.width / 2;
                 //starting at 1 because the first element can't be auto positioned
                 for (var i = 1; i < steps.length; i++) {
                     var step = steps[i];
+                    var prevStep = steps[i - 1];
+                    // check if we should do a auto position
                     if (step.autoPosition || (presentation.autoPosition && step.x == 0 && step.y == 0 )) {
+                        // set autoPosition on the step in case we positioned it but the attribute came from the
+                        // presentation. This is important if we have to reposition the element in case the
+                        // order of steps changes
                         step.autoPosition = step.autoPosition || true;
-                        var prevStep = steps[i - 1];
-                        step.x = prevStep.x + width + (step.autoMargin || presentation.autoMargin) * step.scale;
+
+                        step.x = prevStep.x
+                                + width * prevStep.scale + width * step.scale
+                                + (step.autoMargin || presentation.autoMargin);
                     }
                 }
             };
