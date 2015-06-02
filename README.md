@@ -9,11 +9,19 @@ high-impress on the other hand aims to be easy to use, even if you are new to we
 
 ## Browser compatibility
 
-As of now, only the newest Version of Chrome is supported. My plan is, to support at least the latest Version of Firefox when I approach a Version 1.0 release.
+As of now, only the newest Version of Chrome and Firefox are supported. The code uses polymer 1.0 to build the web components, so may also work in other browsers but it's not tested.
 
-Chrome | Firefox | IE | Safari
--------|---------|----|-------
-YES | NO | NO |NO
+### Firefox quirks
+
+Because Firefox doesn't have native HTML import support you have to load the webcomponents polyfill and the high-impress helper library before importing high-impress itself.
+
+```html
+<!-- 1. Load platform support before any code that touches the DOM. -->
+<script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+<script src="bower_components/high-impress/libs/helper.js"></script>
+<!-- 2. Load the component using an HTML Import -->
+<link rel="import" href="bower_components/high-impress/high-impress.html">
+```
 
 ## Get high-impress
 ### Get the template with batteries included (recommend)
@@ -34,6 +42,8 @@ The code for a minimal HTML page, which creates a presentation with just a singl
 <html>
 <head>
     <meta charset="UTF-8">
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="bower_components/high-impress/libs/helper.js"></script>
     <link rel="import" href="bower_components/high-impress/high-impress.html">
 </head>
 <body>
