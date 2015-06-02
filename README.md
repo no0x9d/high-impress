@@ -47,7 +47,7 @@ The code for a minimal HTML page, which creates a presentation with just a singl
     <link rel="import" href="bower_components/high-impress/high-impress.html">
 </head>
 <body>
-    <hi-presentation autoPosition>
+    <hi-presentation auto-position>
         <hi-step>
             Hello World!
         </hi-step>
