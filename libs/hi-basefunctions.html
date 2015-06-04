@@ -12,6 +12,18 @@
                 this.removeEventListener(event, cb)
             },
 
+            onEnter: function onEnter(cb, capture){
+                this.on("hi:enter", cb, capture);
+            },
+
+            onEntering: function onEntering(cb, capture){
+                this.on("hi:entering", cb, capture);
+            },
+
+            onLeave: function onLeave(cb, capture){
+                this.on("hi:leave", cb, capture);
+            },
+
 
             // `toNumber` takes a value given as `numeric` parameter and tries to turn
             // it into a number. If it is not possible it returns 0 (or other value

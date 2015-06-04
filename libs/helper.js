@@ -71,7 +71,7 @@
         if(polymerReady){
             presentation.setSteps(steps);
         }else {
-            presentation.addEventListener('hi-presentation:dom-ready', function () {
+            presentation.addEventListener('hi:ready', function () {
                 presentation.setSteps(steps)
             });
         }

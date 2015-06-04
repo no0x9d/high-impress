@@ -321,7 +321,7 @@
                     // And it has to be set after animation finishes, because in Chrome it
                     // makes transtion laggy.
                     // BUG: http://code.google.com/p/chromium/issues/detail?id=62820
-                    this.addEventListener("enter", function (event) {
+                    this.addEventListener("hi:enter", function (event) {
                         window.location.hash = lastHash = "#/" + event.target.id;
                     }, false);
 
@@ -356,7 +356,7 @@
                     }, 250), false);
                 },
                 domReady: function () {
-                    this.fire('hi-presentation:dom-ready');
+                    this.fire('hi:ready', this);
 
                     if (!this.steps) {
                         // every element with a hi-step attribute can be a possible step
@@ -478,7 +478,7 @@
                         //only if the current step is also the last step entered trigger 'leave' event
                         if (root.lastEntered === activeStep) {
                             root.lastEntered = null;
-                            activeStep.fire('leave')
+                            activeStep.fire('hi:leave', { oldStep: activeStep, newStep: step })
                         }
                     }
 
@@ -528,7 +528,7 @@
                     // Fire a entering event after the transition started. This may be important, because it's not sure
                     // that the now step is entered. The transition is canceled when a goto is triggered while the animation
                     // lasts, omitting a enter event and just triggers a new leave event.
-                    activeStep.fire('entering');
+                    activeStep.fire('hi:entering', { newStep: activeStep });
 
                     // And here is where we trigger `enter` event.
                     // We simply set up a timeout to fire it taking transition duration (and possible delay) into account.
@@ -546,7 +546,7 @@
                     this.stepEnterTimeout = window.setTimeout(function () {
                         if (root.lastEntered !== activeStep) {
                             root.lastEntered = activeStep;
-                            activeStep.fire('enter');
+                            activeStep.fire('hi:enter', { newStep: activeStep });
                         }
                     }, duration + delay);
 
