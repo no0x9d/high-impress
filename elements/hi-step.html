@@ -6,6 +6,13 @@
             //get a reference on our helper api
             var hi = window.HighImpress;
 
+            var setSubstepState = function setSubstepState (element, state) {
+                element.classList.remove("future");
+                element.classList.remove("present");
+                element.classList.remove("past");
+                element.classList.add(state);
+            };
+
             Polymer({
                 is:"hi-step",
 
@@ -17,12 +24,19 @@
 
                 properties:{
                     transitionDuration: Number,
+                    resetSubsteps: Boolean,
                     nextStep: String,
                     prevStep: String
                 },
-
                 ready: function () {
-                    console.log("step ready");
+                    this.initSubsteps();
+                    this.onEntering(function () {
+                        if(this.resetSubsteps){
+                            this.initSubsteps();
+                        }
+                    })
+                },
+                initSubsteps: function () {
                     // initialize li elements of lists with .substeps
                     var substeps = hi.$$(".substeps", this);
                     if(substeps) {
@@ -40,7 +54,7 @@
                     substeps = hi.$$(".substep", this);
                     if (substeps) {
                         substeps.forEach(function (sub) {
-                            sub.classList.add("future");
+                            setSubstepState(sub, "future")
                         });
                     }
                 },
@@ -48,8 +62,7 @@
                     var lastSubsteps = hi.$$('.substep.present', this);
                     if (lastSubsteps) {
                         lastSubsteps.forEach(function (lastSubstep) {
-                            lastSubstep.classList.remove("present");
-                            lastSubstep.classList.add("past");
+                            setSubstepState(lastSubstep, "past");
                         });
                     }
 
@@ -61,15 +74,14 @@
                             var groupid = substep.dataset.group;
                             substeps.forEach(function (sub) {
                                 if (sub.dataset.group && sub.dataset.group == groupid) {
-                                    sub.classList.remove("future");
-                                    sub.classList.add("present");
+                                    setSubstepState(sub, "present");
                                 }
                             });
                         }
                         else {
-                            substep.classList.remove("future");
-                            substep.classList.add("present");
+                            setSubstepState(substep, "present");
                         }
+                        this.fire("hi:substepChanged", {oldSubsteps: lastSubsteps, newSubsteps: substeps});
                         return true;
                     }
                     return false;
