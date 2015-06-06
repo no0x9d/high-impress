@@ -86,6 +86,7 @@
             var setSteps = function (steps, presentation) {
                 if (steps.length > 0) {
                     presentation._setSteps(steps);
+                    presentation.fire("hi:setSteps", steps)
                 }
             };
 
