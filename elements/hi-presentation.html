@@ -418,6 +418,7 @@
                     var windowScale = this._windowScale;
                     var root = this;
                     var canvas = this.$.canvas;
+                    var body = document.body;
 
                     if (!(el = getStep(el, this.steps))) {
                         // presentation not initialized or given element is not a step
@@ -438,11 +439,13 @@
 
                     if (activeStep) {
                         activeStep.classList.remove("active");
-//                        body.classList.remove("hi-on-" + activeStep.id);
+                        body.classList.remove("hi-on-" + activeStep.id);
+                        this.classList.remove("hi-on-" + activeStep.id);
                     }
                     el.classList.add("active");
 
-//                    body.classList.add("hi-on-" + el.id);
+                    body.classList.add("hi-on-" + el.id);
+                    this.classList.add("hi-on-" + el.id);
 
                     // compute target state of the canvas based on given step
                     var target = {
