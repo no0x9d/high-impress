@@ -1,0 +1,62 @@
+<dom-module id="hi-progress">
+    <style>
+        :host {
+            width: 100%;
+        }
+
+        #progressbar {
+            position: absolute;
+            bottom: 0;
+            border: solid transparent;
+            border-bottom-color: teal;
+            border-width: 0 10px 7px 0 ;
+            transition: width .5s linear;
+        }
+    </style>
+    <template>
+        <div id="progressbar"></div>
+    </template>
+</dom-module>
+<script>
+    hi(function () {
+        'use strict';
+
+        var hi = window.HighImpress;
+
+        Polymer({
+            is: "hi-progress",
+
+            properties: {
+                presentation: String,
+                height: String,
+                color: String,
+                tip: String,
+                duration: String
+            },
+
+            setStyles: function(){
+                this.$.progressbar.style.borderBottomColor = this.color;
+                this.$.progressbar.style.borderBottomWidth = this.height;
+                this.$.progressbar.style.borderRightWidth = this.tip;
+            },
+
+            attached: function () {
+                var presentation = hi(this.presentation) || hi();
+                var progressbar = this.$.progressbar;
+
+                this.setStyles();
+
+                var updateProgress = function updateProgress(){
+                    progressbar.style.width = presentation.activeNumber / presentation.numberOfSteps * 100 +'%';
+                };
+
+                presentation.onEntering(function () {
+                    updateProgress();
+                });
+                presentation.on('setSteps', function(){
+                    updateProgress();
+                })
+            }
+        });
+    });
+</script>

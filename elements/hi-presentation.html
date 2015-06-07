@@ -159,7 +159,7 @@
                         type: Array,
                         readOnly: true
                     },
-                    numberOfStep: {
+                    numberOfSteps: {
                         type: Number,
                         computed: "computeNumOfSteps(steps)"
                     },
@@ -170,7 +170,7 @@
                     activeNumber: {
                         type: Number,
                         computed: "computeActiveNumber(activeStep, steps)"
-                    },
+                    }
                 },
 
                 computeActiveIndex: function(activeStep, steps){
@@ -186,7 +186,6 @@
                 },
 
                 ready: function () {
-                    console.log("presentation ready");
                     var root = this;
                     var canvas = this.$.canvas;
                     var body = document.body;
