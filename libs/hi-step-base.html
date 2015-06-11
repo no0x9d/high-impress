@@ -1,0 +1,91 @@
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../libs/hi-base.html">
+<link rel="import" href="../libs/hi-basefunctions.html">
+
+<script>
+    (function hiStep(window) {
+
+        //get a reference on our helper api
+        var hi = window.HighImpress;
+
+        var setSubstepState = function setSubstepState (element, state) {
+            element.classList.remove("future");
+            element.classList.remove("present");
+            element.classList.remove("past");
+            element.classList.add(state);
+        };
+
+        hi.HIStep = {
+            behaviors: [hi.BaseFunctions, hi.ElementBase],
+
+            hostAttributes: {
+                "hi-step": true
+            },
+
+            properties:{
+                transitionDuration: Number,
+                resetSubsteps: Boolean,
+                nextStep: String,
+                prevStep: String
+            },
+            ready: function () {
+                this.initSubsteps();
+                this.onEntering(function () {
+                    if(this.resetSubsteps){
+                        this.initSubsteps();
+                    }
+                })
+            },
+            initSubsteps: function () {
+                // initialize li elements of lists with .substeps
+                var substeps = hi.$$(".substeps", this);
+                if(substeps) {
+                    substeps.forEach(function (subList) {
+                        var subLi = hi.$$("li", subList);
+                        if(subLi){
+                            subLi.forEach(function (li) {
+                                li.classList.add("substep");
+                            })
+                        }
+                    })
+                }
+
+                // initialize state of substeps to 'future'
+                substeps = hi.$$(".substep", this);
+                if (substeps) {
+                    substeps.forEach(function (sub) {
+                        setSubstepState(sub, "future")
+                    });
+                }
+            },
+            nextSubstep: function () {
+                var lastSubsteps = hi.$$('.substep.present', this);
+                if (lastSubsteps) {
+                    lastSubsteps.forEach(function (lastSubstep) {
+                        setSubstepState(lastSubstep, "past");
+                    });
+                }
+
+                var substep = hi.$('.substep.future', this);
+                var substeps = hi.$$('.substep.future', this);
+
+                if (substep) {
+                    if (substep.dataset.group) {
+                        var groupid = substep.dataset.group;
+                        substeps.forEach(function (sub) {
+                            if (sub.dataset.group && sub.dataset.group == groupid) {
+                                setSubstepState(sub, "present");
+                            }
+                        });
+                    }
+                    else {
+                        setSubstepState(substep, "present");
+                    }
+                    this.fire("hi:substepChanged", {oldSubsteps: lastSubsteps, newSubsteps: substeps});
+                    return true;
+                }
+                return false;
+            }
+        };
+    })(window);
+</script>

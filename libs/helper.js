@@ -1,5 +1,9 @@
 (function (window) {
 
+    if (window.HighImpress && window.hi) {
+        return;
+    }
+
     // our api is function simmilar to jQuery. If the argument is a string we get back a element
     // for this selector and if it is a function it is called when the document is ready.
     var api = function highImpress(arg1, arg2) {
@@ -9,7 +13,7 @@
         else if (typeof arg1 === 'function') {
             ready(arg1);
         }
-        else if (Array.isArray(arg1)){
+        else if (Array.isArray(arg1)) {
             setSteps(arg1, arg2)
         }
         else if (typeof arg1 === 'undefined') {
@@ -66,11 +70,11 @@
         }
     }
 
-    function setSteps(steps, presentation){
+    function setSteps(steps, presentation) {
         presentation = presentation || getPresentation();
-        if(polymerReady){
+        if (polymerReady) {
             presentation.setSteps(steps);
-        }else {
+        } else {
             presentation.addEventListener('hi:ready', function () {
                 presentation.setSteps(steps)
             });
